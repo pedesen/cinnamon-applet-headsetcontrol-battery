@@ -43,11 +43,16 @@ HeadsetcontrolBattery.prototype = {
   },
 
   _get_status: function () {
-    const response = this._run_cmd("headsetcontrol -b");
-    const status = response.match(/Battery: (.*)/)[1];
+    const match = this._run_cmd("headsetcontrol -b").match(/Battery: (.*)/);
+    const status = match ? match[1] : null;
 
-    this.set_applet_label(status === "Charging" ? "Chg" : status);
-    this.set_applet_tooltip(_(`Battery: ${status}`));
+    if (status === null) {
+      this.set_applet_label("off");
+      this.set_applet_tooltip(_(`Off`));
+    } else {
+      this.set_applet_label(status === "Charging" ? "Chg" : status);
+      this.set_applet_tooltip(_(`Battery: ${status}`));
+    }
   },
 
   _update_loop: function () {
